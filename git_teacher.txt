@@ -1,6 +1,7 @@
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 ===================================================================
+# for not exit ,create a new 
 echo "# teacher-doc" >> README.md
 git init
 git add README.md
@@ -8,5 +9,6 @@ git commit -m "first commit"
 git remote add origin https://github.com/tensor-core/teacher-doc.git
 git push -u origin master
 =====================================================================
+#  for exit
 git remote add origin https://github.com/tensor-core/teacher-doc.git
 git push -u origin master
