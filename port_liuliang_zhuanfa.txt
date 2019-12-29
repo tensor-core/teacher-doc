@@ -1,1 +1,3 @@
+软件：rinetd
+配置文件:
 /etc/rinetd.conf
