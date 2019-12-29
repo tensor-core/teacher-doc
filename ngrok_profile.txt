@@ -1,0 +1,4 @@
+./ngrok authtoken 1VWTws2YnYEbZiql1TJUZR6SnMl_wVnmZrF4m1rGnus5wnKX
+./ngrok help
+To start a HTTP tunnel on port 80, run this next:
+$ ./ngrok http 80
