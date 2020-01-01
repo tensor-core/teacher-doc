@@ -91,3 +91,36 @@ sudo systemctl start docker
 
 # 将当前用户添加到docker用户组之中
 sudo usermod -aG docker $(whoami)
+
+//=========================================================================================================================
+升级Fedora到28
+https://fedoraproject.org/wiki/DNF_system_upgrade
+
+$ sudo dnf upgrade --refresh
+$ sudo dnf install dnf-plugin-system-upgrade
+$ sudo dnf system-upgrade download --refresh --releasever=28 --allowerasing
+$ sudo dnf system-upgrade reboot
+安装Docker-CE
+https://docs.docker.com/install/linux/docker-ce/fedora/
+
+需要Fedora版本 26/27/28
+
+$ sudo dnf remove docker \
+                  docker-client \
+                  docker-client-latest \
+                  docker-common \
+                  docker-latest \
+                  docker-latest-logrotate \
+                  docker-logrotate \
+                  docker-selinux \
+                  docker-engine-selinux \
+                  docker-engine
+$ sudo dnf -y install dnf-plugins-core
+$ sudo dnf config-manager \
+    --add-repo \
+   http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo 
+官方的repo是"https://download.docker.com/linux/fedora/docker-ce.repo"， 但这里用了阿里云的
+
+$ sudo dnf install docker-ce
+$ sudo systemctl start docker
+$ sudo docker run hello-world
