@@ -1,0 +1,22 @@
+Docker-compose常用命令
+原创dongfang1017 发布于2019-04-21 13:58:25 阅读数 1262  收藏
+展开
+
+
+docker-compose ps 查看当前有哪些容器（docker-compose.yml 所在文件夹下执行）
+
+docker-compose config  -q                        验证（docker-compose.yml）文件配置，当配置正确时，不输出任何内容，当文件配置错误，输出错误信息。
+
+docker-compose restart nginx  重新启动nginx服务的容器（注意是 编排文件中的service）
+
+docker-compose logs nginx    查看nginx的日志 
+
+docker-compose logs -f nginx      查看nginx的实时日志
+
+docker-compose up 
+
+docker-compose down
+
+docker-compose exec nginx bash  进入nginx服务下容器
+
+docker-compose exec --index=1 nginx bash 进入nginx服务下容器 多台 需要加参数 --index=xxx
