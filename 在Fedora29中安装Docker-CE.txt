@@ -1,0 +1,93 @@
+在Fedora 29中安装Docker-CE
+
+grass_rt
+0.035
+2018.12.07 18:39:23
+字数 1,009
+阅读 1,106
+一、声明和感谢
+本文主要参考了Josphat Mutai发布的文章《How to install Docker on Fedora 29 / Fedora 28》。文章在叙述上根据本人操作过程进行了调整，核心是针对天朝网络状况而更换了国内源。由原文章标题可知，文中描述安装Docker-CE的方法能够应用于Fedora 28和Fedora 29这两个版本。Josphat Mutai，感谢你精彩的文章。
+
+二、遇阻
+这两天生病在家休息，有了时间继续学习Linux。用VMware安装的是Fedora 29 Server。安装过程非常顺利，但在安装Docker时遇到了障碍。参考官方文档中有关Fedora的描述后进行尝试，发现由于国内网络环境的特殊性，并不能有效解决安装中遇到的问题。所幸很快搜索到Josphat Mutai的文章，稍作调整竟让我这样的小白捡漏尝试成功。以下就是在Fedora 29中安装Docker的过程。
+
+三、安装和配置过程
+1. 备份和更新
+在Docker官方文档中要求卸载早期版本，但使用dnf命令在Fedora 29 Server中并没有与Docker安装有关的任何记录。因此可以省去与卸载相关的操作。
+此时，由于要涉及更新Fedora系统，因此建议各位首先如我一般更换Fedora阿里云源节省时间：
+
+# 备份Fedora源配置文件以防万一
+sudo mv /etc/yum.repos.d/fedora.repo  fedora.repo.bak
+sudo mv /etc/yum.repos.d/fedora-updates.repo  fedora-updates.repo.bak
+
+# 从阿里云镜像站点下载repository源文件
+sudo wget http://mirrors.aliyun.com/repo/fedora.repo \
+     -O /etc/yum.repos.d/fedora.repo     
+sudo wget http://mirrors.aliyun.com/repo/fedora-updates.repo \
+     -O /etc/yum.repos.d/fedora-updates.repo
+     
+
+# 清理dnf安装缓存
+sudo dnf clean all
+
+# 更新系统
+sudo dnf -y update
+
+# 重启以生效新系统
+sudo reboot
+2. 在Fedora 28 / 29中添加Docker源
+实事求是的说，现在Docker官方还没有适配Fedora 29，在此我们只能安装适配于Fedora 28的版本。更加不幸的是，Fedora官方的源文件中并不包含Docker的安装信息，因此需要我们为Fedora源文件手动添加配置信息。
+首先安装dnf-plugins-core。如果你如我一般安装的是Fedora 29 Server，则此步骤可跳过。由于没有安装其他版本进行测试，所以强烈建议还是要如下进行操作：
+
+# 安装dnf-plugins-core
+sudo dnf -y install dnf-plugins-core
+接下来，需要执行以下命令实现手动添加DockerStable版本Dock-CE阿里云源：
+
+# 通过重定向到/etc/yum.repos.d/docker-ce.repo文件，实现手动添加阿里云源
+sudo cat > /etc/yum.repos.d/docker-ce.repo << EOF
+[docker-ce-stable]
+name=Docker CE Stable
+baseurl=https://mirrors.aliyun.com/docker-ce/linux/fedora/28/x86_64/stable/
+enabled=1
+gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/docker-ce/linux/fedora/gpg
+EOF
+3. 安装Docker-CE
+一切就绪，现在只需要dnf一声令下就可以安装Docker了：
+
+# 使用dnf安装Docker-CE
+sudo dnf -y install docker-ce
+经过一段时间的等待，Docker安装完毕。通过以下命令来检测安装：
+
+# 显示版本Docker的版本信息测试安装结果
+docker version
+你是否也看到了类似的反馈信息？
+
+
+docker version.png
+4. 为Docker-CE添加国内源
+Docker官方为天朝用户准备了加速源，但服务器上只存储了时下流行的镜像。如果你需要的镜像不够“风光”或者是私有镜像，仍需慢速连接Docker主服务器进行下载。但无论如何，这已经为我们提供了极大的便利。
+根据Docker官方中文文档中的说明，我们可以通过手动配置来添加Docker官方国内源：
+
+# 创建/etc/docker/daemon.json文件并写入Docker官方加速源地址
+sudo tee /etc/docker/daemon.json  << EOF
+{
+  "registry-mirrors": ["https://registry.docker-cn.com"]
+}
+EOF
+此时一定要注意，该配置文件是一个json文件，必须要满足其语法要求，否则加速无法生效。
+
+5. 启用Docker-CE服务
+作为使用systemd的系统来说，如果我们需要每次在系统启动后都能使用Docker，需要将其作为Service来配置和启动。具体而言，可以使用如下命令来实现：
+
+# 允许Docker在系统启动时运行
+sudo systemctl enable docker
+
+# 立即运行Docker
+sudo systemctl start docker
+6. 将当前用户添加到docker组
+根据Docker官方文档的描述，Docker只允许root和docker用户组中的用户才能使用。基于安全原因，我们通常不会使用root账户，所以唯一的解决方案就是将用户加入docker用户组。
+在Docke-CE安装完毕后，Linux系统中会自动创建好docker用户组。下面的命令演示了如何将当前用户添加到docker用户组之中：
+
+# 将当前用户添加到docker用户组之中
+sudo usermod -aG docker $(whoami)
