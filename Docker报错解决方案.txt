@@ -1,0 +1,21 @@
+1     ======================================================================================================================
+解决Fedora31上docker启动报错 open /sys/fs/cgroup/docker/cpuset.cpus.effective: no such file or directory
+转载腐烂的蓑衣 发布于2019-12-01 22:37:22 阅读数 40  收藏
+展开
+版权声明：本文为博主原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接和本声明。
+本文链接：https://blog.csdn.net/hknaruto/article/details/103032203
+$ sudo dnf install -y grubby
+$ sudo grubby --update-kernel=ALL --args="systemd.unified_cgroup_hierarchy=0"
+$ sudo reboot
+[yeqiang@localhost ~]$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+mysql               latest              c8ee894bd2bd        3 weeks ago         456MB
+ 
+[yeqiang@localhost ~]$ docker run -it mysql:latest /bin/bash
+root@18086f8be919:/# exit
+[yeqiang@localhost ~]$ 
+原因：
+
+Fedora 31 使用cgroup v2，这个版本的cgroup跟目前的docker兼容性不好。
+
+2     ======================================================================================================================
