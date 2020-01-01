@@ -124,3 +124,70 @@ $ sudo dnf config-manager \
 $ sudo dnf install docker-ce
 $ sudo systemctl start docker
 $ sudo docker run hello-world
+
+//==========================================================================================================================
+ 在fedora 31 安装docker
+
+目录
+
+    简介：
+    一：回退cgroup
+    二：添加docker源
+    三：安装dockder-ce
+    四：配置自动启动
+    五：检查docker状态
+    六：可以安装docker-compose
+     
+
+ 
+回到顶部
+简介：
+
+本来没啥特别的，但是fedora使用的cgroup版本太高，docker还没跟上来。
+
+就简单介绍一下怎么在fedora上安装docker吧
+回到顶部
+一：回退cgroup
+
+$ sudo dnf install -y grubby
+$ sudo grubby --update-kernel=ALL --args="systemd.unified_cgroup_hierarchy=0"
+$ sudo reboot
+
+回到顶部
+二：添加docker源
+
+$ sudo dnf config-manager --add-repo=https://download.docker.com/linux/fedora/docker-ce.repo
+
+回到顶部
+三：安装dockder-ce
+
+$ sudo dnf install docker-ce
+
+回到顶部
+四：配置自动启动
+
+$ sudo systemctl enable --now docker
+
+回到顶部
+五：检查docker状态
+复制代码
+
+$ systemctl enable --now docker
+Created symlink /etc/systemd/system/multi-user.target.wants/docker.service → /usr/lib/systemd/system/docker.service.
+[root@localhost ~]# systemctl status docker
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; vendor preset: disabled)
+   Active: active (running) since Fri 2019-10-18 14:11:18 AEDT; 47s ago
+     Docs: https://docs.docker.com
+ Main PID: 4081 (dockerd)
+    Tasks: 13
+   Memory: 40.5M
+      CPU: 524ms
+   CGroup: /system.slice/docker.service
+           └─4081 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+
+复制代码
+回到顶部
+六：可以安装docker-compose
+
+$ sudo dnf install docker-compose
