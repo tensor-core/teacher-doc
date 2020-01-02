@@ -1,0 +1,217 @@
+使用Dockerfile创建docker镜像
+原创rznice 发布于2016-08-15 15:28:40 阅读数 52157  收藏
+展开
+在Dockerfile中用到的命令有
+FROM
+    FROM指定一个基础镜像， 一般情况下一个可用的 Dockerfile一定是 FROM 为第一个指令。至于image则可以是任何合理存在的image镜像。
+    FROM 一定是首个非注释指令 Dockerfile.
+    FROM 可以在一个 Dockerfile 中出现多次，以便于创建混合的images。
+    如果没有指定 tag ，latest 将会被指定为要使用的基础镜像版本。
+MAINTAINER
+    这里是用于指定镜像制作者的信息
+RUN
+    RUN命令将在当前image中执行任意合法命令并提交执行结果。命令执行提交后，就会自动执行Dockerfile中的下一个指令。
+    层级 RUN 指令和生成提交是符合Docker核心理念的做法。它允许像版本控制那样，在任意一个点，对image 镜像进行定制化构建。
+    RUN 指令缓存不会在下个命令执行时自动失效。比如 RUN apt-get dist-upgrade -y 的缓存就可能被用于下一个指令. --no-cache 标志可以被用于强制取消缓存使用。
+ENV
+    ENV指令可以用于为docker容器设置环境变量
+    ENV设置的环境变量，可以使用 docker inspect命令来查看。同时还可以使用docker run --env <key>=<value>来修改环境变量。
+USER
+    USER 用来切换运行属主身份的。Docker 默认是使用 root，但若不需要，建议切换使用者身分，毕竟 root 权限太大了，使用上有安全的风险。
+WORKDIR
+    WORKDIR 用来切换工作目录的。Docker 默认的工作目录是/，只有 RUN 能执行 cd 命令切换目录，而且还只作用在当下下的 RUN，也就是说每一个 RUN 都是独立进行的。如果想让其他指令在指定的目录下执行，就得靠 WORKDIR。WORKDIR 动作的目录改变是持久的，不用每个指令前都使用一次 WORKDIR。
+COPY
+    COPY 将文件从路径 <src> 复制添加到容器内部路径 <dest>。
+    <src> 必须是想对于源文件夹的一个文件或目录，也可以是一个远程的url，<dest> 是目标容器中的绝对路径。
+    所有的新文件和文件夹都会创建UID 和 GID 。事实上如果 <src> 是一个远程文件URL，那么目标文件的权限将会是600。
+ADD
+    ADD 将文件从路径 <src> 复制添加到容器内部路径 <dest>。
+    <src> 必须是想对于源文件夹的一个文件或目录，也可以是一个远程的url。<dest> 是目标容器中的绝对路径。
+    所有的新文件和文件夹都会创建UID 和 GID。事实上如果 <src> 是一个远程文件URL，那么目标文件的权限将会是600。
+VOLUME
+    创建一个可以从本地主机或其他容器挂载的挂载点，一般用来存放数据库和需要保持的数据等。
+EXPOSE
+    EXPOSE 指令指定在docker允许时指定的端口进行转发。
+
+CMD
+    Dockerfile.中只能有一个CMD指令。 如果你指定了多个，那么最后个CMD指令是生效的。
+    CMD指令的主要作用是提供默认的执行容器。这些默认值可以包括可执行文件，也可以省略可执行文件。
+    当你使用shell或exec格式时，  CMD 会自动执行这个命令。
+ONBUILD
+    ONBUILD 的作用就是让指令延迟執行，延迟到下一个使用 FROM 的 Dockerfile 在建立 image 时执行，只限延迟一次。
+    ONBUILD 的使用情景是在建立镜像时取得最新的源码 (搭配 RUN) 与限定系统框架。
+ARG
+    ARG是Docker1.9 版本才新加入的指令。
+    ARG 定义的变量只在建立 image 时有效，建立完成后变量就失效消失
+LABEL
+    定义一个 image 标签 Owner，并赋值，其值为变量 Name 的值。(LABEL Owner=$Name )
+
+ENTRYPOINT
+    是指定 Docker image 运行成 instance (也就是 Docker container) 时，要执行的命令或者文件。
+    我自己的Dockerfile文件内容如下：
+
+FROM docker.io/centos
+MAINTAINER The CentOS Test Images - test
+RUN mkdir -p /usr/app
+RUN ls
+RUN pwd
+COPY /jdk /usr/app/jdk/
+ADD tomcat/ /usr/app/tomcat/
+ADD hadoop/ /usr/app/hadoop/
+ENV JAVA_HOME /usr/app/jdk
+ENV PATH $JAVA_HOME/bin:$PATH
+#ADD /soft/jdk /
+#ADD /soft/tomcat /
+#ADD /soft/hadoop /
+# Volumes for systemd
+# VOLUME ["/run", "/tmp"]
+# Environment for systemd
+# ENV container=docker
+# For systemd usage this changes to /usr/sbin/init
+# Keeping it as /bin/bash for compatibility with previous
+#CMD ["/bin/bash"]
+
+首先来看下我的目录结构：
+
+[root@localhost docker]# pwd
+/soft/docker
+[root@localhost docker]# ll
+total 4
+-rw-r--r--. 1 root root 541 Aug 15 11:20 Dockerfile
+[root@localhost docker]# cd ..
+[root@localhost soft]# pwd
+/soft
+[root@localhost soft]# ll
+total 393332
+-rw-r--r--. 1 root  root    9271609 Aug 10 17:23 apache-tomcat-8.5.4.tar.gz
+drwxr-xr-x. 2 root  root         23 Aug 15 11:20 docker
+drwxr-xr-x. 9 10011 10011      4096 Jan 26  2016 hadoop
+-rw-r--r--. 1 root  root  212046774 Aug  8 18:01 hadoop-2.7.2.tar.gz
+drwxr-xr-x. 8    10   143      4096 Jun 23 09:56 jdk
+-rw-r--r--. 1 root  root  181435897 Aug  8 17:23 jdk-8u102-linux-x64.tar.gz
+drwxr-xr-x. 9 root  root       4096 Aug 10 17:24 tomcat
+
+  Dockerfile文件创建好了，就可以通过docker build来创建docker镜像。
+  看下docker build的帮助文件：
+
+[root@localhost soft]# docker build --help
+
+Usage:  docker build [OPTIONS] PATH | URL | -
+
+Build an image from a Dockerfile
+
+  --build-arg=[]                  Set build-time variables
+  --cpu-shares                    CPU shares (relative weight)
+  --cgroup-parent                 Optional parent cgroup for the container
+  --cpu-period                    Limit the CPU CFS (Completely Fair Scheduler) period
+  --cpu-quota                     Limit the CPU CFS (Completely Fair Scheduler) quota
+  --cpuset-cpus                   CPUs in which to allow execution (0-3, 0,1)
+  --cpuset-mems                   MEMs in which to allow execution (0-3, 0,1)
+  --disable-content-trust=true    Skip image verification
+  -f, --file                      Name of the Dockerfile (Default is 'PATH/Dockerfile')
+  --force-rm                      Always remove intermediate containers
+  --help                          Print usage
+  --isolation                     Container isolation level
+  -m, --memory                    Memory limit
+  --memory-swap                   Swap limit equal to memory plus swap: '-1' to enable unlimited swap
+  --no-cache                      Do not use cache when building the image
+  --pull                          Always attempt to pull a newer version of the image
+  -q, --quiet                     Suppress the build output and print image ID on success
+  --rm=true                       Remove intermediate containers after a successful build
+  --shm-size                      Size of /dev/shm, default value is 64MB
+  -t, --tag=[]                    Name and optionally a tag in the 'name:tag' format
+  --ulimit=[]                     Ulimit options
+  -v, --volume=[]                 Set build-time bind mounts
+
+  生成镜像：
+1
+[root@localhost soft]# docker build -t centos:base -f /soft/docker/Dockerfile /soft
+Sending build context to Docker daemon 1.118 GB
+Step 1 : FROM docker.io/centos
+Trying to pull repository docker.io/library/centos ... 
+latest: Pulling from docker.io/library/centos
+3d8673bd162a: Pull complete 
+Digest: sha256:a66ffcb73930584413de83311ca11a4cb4938c9b2521d331026dad970c19adf4
+Status: Downloaded newer image for docker.io/centos:latest
+ ---> 970633036444
+Step 2 : MAINTAINER The CentOS Test Images <liuqi@rzport.com> - liuqi
+ ---> Running in 69fd729187f2
+ ---> 7f61239ff233
+Removing intermediate container 69fd729187f2
+Step 3 : RUN mkdir -p /usr/app
+ ---> Running in fb5e95a82274
+ ---> 32826b551857
+Removing intermediate container fb5e95a82274
+Step 4 : RUN ls
+ ---> Running in 4cbe815e848f
+anaconda-post.log
+bin
+dev
+etc
+home
+lib
+lib64
+lost+found
+media
+mnt
+opt
+proc
+root
+run
+sbin
+srv
+sys
+tmp
+usr
+var
+ ---> 8c3b8f7ebc57
+Removing intermediate container 4cbe815e848f
+Step 5 : RUN pwd
+ ---> Running in f226b1caf3e0
+/
+ ---> 19379045c11d
+Removing intermediate container f226b1caf3e0
+Step 6 : COPY /jdk /usr/app/jdk/
+ ---> 3137c3ee72dc
+Removing intermediate container 6c1e513e964c
+Step 7 : ADD tomcat/ /usr/app/tomcat/
+ ---> 8c6d7a52769a
+Removing intermediate container 98d8178ef560
+Step 8 : ADD hadoop/ /usr/app/hadoop/
+ ---> 34a8ea483a7e
+Removing intermediate container ee7fdc55dbc9
+Step 9 : ENV JAVA_HOME /usr/app/jdk
+ ---> Running in 0a4f8f242ede
+ ---> a297fbddb78a
+Removing intermediate container 0a4f8f242ede
+Step 10 : ENV PATH $JAVA_HOME/bin:$PATH
+ ---> Running in 368103f758dd
+ ---> 9d20362732d7
+Removing intermediate container 368103f758dd
+Successfully built 9d20362732d7
+
+[root@localhost soft]# docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+centos              base                9d20362732d7        4 minutes ago       904.8 MB
+docker.io/centos    latest              970633036444        2 weeks ago         196.7 MB
+
+
+  通过-f来指定Dockerfile文件的位置，后面的/soft及其目录下必须能够找到Dockerfile文件否则就会报上下文环境的错误,MV,COPY,ADD的文件位置都是相对/soft来说的。
+
+[root@localhost soft]# docker build -t centos:bases -f /soft/docker/Dockerfile /usr
+unable to prepare context: The Dockerfile (/soft/docker/Dockerfile) must be within the build context (/usr)
+
+  这样可以解决Dockerfile文件与需要拷贝的文件不在同一个目录下的问题，例如使用ADD，COPY指令出现的 no such file or directory，Forbidden path outside the build context: ../jdk/ ()等类似的错误。
+  镜像创建完毕后，就可以启动docker run来启动镜像，启动镜像的时候同时会创建一个容器，我们可以简单的把镜像比如成类，容器就是这个类的实例,Image可以理解为一个系统镜像，Container是Image在运行时的一个状态。如果拿虚拟机作一个比喻的话，Image就是关机状态下的磁盘文件，Container就是虚拟机运行时的磁盘文件，包括内存数据。
+   其中，-t选项让Docker分配一个伪终端（pseudo-tty）并绑定到容器的标准输入上，-i则让容器的标准输入保持打开。
+   当利用docker run来创建容器时，Docker 在后台运行的标准操作包括：
+   检查本地是否存在指定的镜像，不存在就从公有仓库下载
+   利用镜像创建并启动一个容器
+   分配一个文件系统，并在只读的镜像层外面挂载一层可读写层
+   从宿主主机配置的网桥接口中桥接一个虚拟接口到容器中去
+   从地址池配置一个 ip 地址给容器
+   执行用户指定的应用程序
+   执行完毕后容器被终止
+————————————————
+版权声明：本文为CSDN博主「rznice」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/rznice/article/details/52211620
