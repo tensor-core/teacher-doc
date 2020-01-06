@@ -1,0 +1,24 @@
+Install vlc in Fedora 26 - video player
+原创ztguang 发布于2017-07-16 17:25:59 阅读数 1637  收藏
+展开
+1. Setup RPMFusion repository
+
+dnf install http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+
+2. Install gstreamer plugins and ffmpeg
+
+dnf install gstreamer1-plugins-base gstreamer1-plugins-good gstreamer1-plugins-ugly gstreamer1-plugins-bad-free gstreamer1-plugins-bad-free gstreamer1-plugins-bad-freeworld gstreamer1-plugins-bad-free-extras ffmpeg
+
+3. Install VLC Player
+
+dnf install vlc
+
+--------------------------------------
+How to run VLC player in root
+--------------------------------------
+cp /usr/bin/vlc /usr/bin/vlc-backup
+sed -i 's/geteuid/getppid/' /usr/bin/vlc
+--------------------------------------
+————————————————
+版权声明：本文为CSDN博主「ztguang」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/ztguang/article/details/75208286
