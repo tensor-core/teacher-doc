@@ -1,0 +1,62 @@
+在Manjaro 18上安装Docker的步骤
+安装概述
+更新Manjaro
+安装Docker
+配置Docker用户
+==========================================步骤1.更新Manjaro
+这是重要的一步。我建议您确保您的Manjaro系统是最新的。使用以下命令来更新系统。
+sudo pacman -Syu
+此过程可能需要几分钟，具体取决于互联网速度。
+==============================================步骤2.安装Docker
+使用此命令安装Docker
+sudo pacman -S docker
+输出：
+[dhani @ dhani-pc〜] $ sudo pacman -S 
+docker 解决依赖关系... 
+寻找冲突的软件包...
+
+软件包（2） bridge-utils -1.6-2 docker-1：18.05.0-2
+
+总下载大小：32,87 MiB 
+总安装大小：159,49 MiB
+
+::继续安装？[是/否]
+按Y，然后按Enter，以确认安装。有时，应该在您的Manjaro系统上安装Docker。现在运行并在启动时启用Docker。
+ 
+sudo systemctl start docker
+sudo systemctl enable docker
+检查Docker版本
+
+sudo docker version
+它应该返回这样的东西
+
+[dhani @ dhani-pc〜] $ sudo docker 版本
+客户端：
+版本：18.05.0- ce
+ API版本：1.37 
+Go版本：go1.10.2 
+Git提交：f150324782 
+内置：2018年5月16日星期三22:27:45 
+OS / Arch： linux / amd64 
+实验：错误的
+编排器：群
+
+服务器：
+引擎：
+版本：18.05.0- ce
+ API版本：1.37（最低版本1.12）
+Go版本：go1.10.2 
+Git提交：f150324782 
+内置：2018年5月16日星期三22:28:17 
+OS / Arch： linux / amd64 
+实验：假
+做完了 此时，Docker已安装在Manjaro上。
+
+========================步骤3.配置Docker用户
+默认情况下，只有具有root或sudo特权的用户才能运行或管理Docker。如果要在没有root特权或每次都不必添加sudo的情况下运行docker，请执行以下操作
+
+sudo usermod -aG docker $USER
+
+然后，重新启动Manjaro。 
+
+重新启动后，您可以运行docker命令，而不必切换到root用户或再使用sudo。您可以使用当前用户权限运行。
