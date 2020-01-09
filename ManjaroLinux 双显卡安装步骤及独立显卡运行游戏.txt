@@ -1,0 +1,37 @@
+1、安装的时候驱动那项选择nofree
+这个可选可不选，因为系统默认安装完成的驱动会存在BUG，在终端用命令：
+optirun glxgears
+测试独立显卡的FPS会固定在60 FPS
+2、在硬件设定中卸载video-linux
+3、用命令行重装闭源显卡驱动（推荐）（如果安装时选择了nonfree可直接从这里开始操作）
+或在硬件设定中安装闭源驱动video-hybrid-intel-nvidia-bumblebee，不要安装其他的闭源，会导致开机黑屏
+再执行③④步
+
+
+①先解决依赖
+sudo pacman -S virtualgl lib32-virtualgl lib32-primus primus
+②安装双显卡切换程序bumblebee
+sudo mhwd -f -i pci video-hybrid-intel-nvidia-bumblebee
+③允许服务
+sudo systemctl enable bumblebeed
+④添加用户
+sudo gpasswd -a $USER bumblebee
+reboot重启
+
+ 
+
+电脑重启后，用命令行：
+
+glxgears  测试集显的FPS
+optirun glxgears  测试独显的FPS
+会发现独显的FPS明显有了变化
+使用：optirun nvidia-smi  查看显卡信息
+至此，manjaro的双显卡就安装好了
+
+显卡驱动安装好后，如何在程序中用独立显卡来运行呢，可以用到optirun命令，格式为：
+optirun wine qq.exe
+例如运行linux帝国全面战争的代码为：
+optirun ~/.local/share/Steam/ubuntu12_32/steam-runtime/run.sh /bin/sh ./Empire.sh
+————————————————
+版权声明：本文为CSDN博主「六六_九九」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/weixin_42205310/article/details/81905293
