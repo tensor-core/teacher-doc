@@ -1,0 +1,415 @@
+
+
+Manjaro Linux的安装体验
+
+2019-05-14 1 min read
+什么是Manjaro？
+
+Manjaro，简单的说它是基于Arch Linux的发行版，Manjaro的目标是让强大的Arch更方便用户使用，比如说安装流程，相比Arch Linux安装时要使用命令行进行分区、挂载分区、网卡设定等，它直接提供类似其他Linux发行版的图形化安装界面，并且将一些常用的设置已经预先配置好，包括会自动安装一些硬件驱动，并且预装了桌面环境和常见的软件。
+
+由于背靠Arch的关系，所以继承了Arch Linux的强大优势：
+
+    最全支持文档，Arch Linux的wiki应该是目前最全的Linux操作手册
+    支持滚动更新，一条命令即可将整个系统包括软件全部升级为最新版本，且无需重启
+    最全软件仓库，Arch Linux的AUR仓库包含最全最新的Linux软件，一条命令即可安装
+
+然而，Manjaro拥有自己的一些额外的功能，包括：
+
+    简化、用户友好的安装过程
+    自动检测计算机的硬件（例如显卡）
+    为系统自动安装必要的软件（例如显卡驱动程序）
+    它自己的专用软件仓库，以确保提供完全测试过的稳定的软件包
+    轻松安装和使用多个内核。
+
+实用链接：
+
+    https://manjaro.org/
+    https://wiki.archlinux.org/
+
+Manjaro的安装
+
+Manjaro的安装非常的简单，按照界面引导一路Next即可。唯一可能产生疑惑的是要安装哪个Linux桌面环境，毕竟提供支持的桌面环境非常的多。
+
+官方推荐的：
+
+    XFCE：非常轻量，适合硬件条件比较差的用户，占用资源较少
+    KDE：操作界面类似Windows的操作界面
+    ARCHITECH：命令行版本，类似Arch Linux，后期要装什么都自己解决，适合Geek
+    GNOME（GNOME3）：操作界面类似 Mac OS
+
+社区维护的版本：
+
+    MATE：GNOME2的延续，用不惯GNOME3的可以选择使用
+    CINNAMON：Mint Linux使用的界面，使用了GNOME3的技术，实现了GNOME2的界面
+    OPENBOX：同样一个轻量级的桌面，没有使用过，具体不太了解。
+    AWESOME：高度可定制化的一个桌面系统，适合Geek
+    BSPWM：轻量平铺窗口的桌面，没用过。
+    BUDGIE：看界面像是基于GNOME2
+    I3：高度可配置的平铺化界面
+    DEEPIN：国内团队开发，界面介于Windows和Mac OS之间。UI看起来不错
+
+由于安装的笔记本硬件较差，所以使用了XFCE版本。另外DEEPIN版本也蛮想尝试的。–update，已经改为deepin版本。
+Manjora安装后的配置及软件安装
+
+1、更新源（选择国内的）和首次更新系统
+	
+sudo pacman -Syy
+sudo pacman-mirrors -i -c China -m rank
+sudo pacman –Syyu
+
+2、添加Arch Linux中文社区仓库
+
+编辑/etc/pacman.conf文件，在文件中添加如下信息：
+	
+[archlinuxcn]
+SigLevel = Optional TrustedOnly
+Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch
+
+备注：镜像repo地址可以从 https://github.com/archlinuxcn/mirrorlist-repo 获取。
+
+文件修改后，需要导入GPG key到本地：
+	
+sudo pacman -Syy && sudo pacman -S archlinuxcn-keyring
+
+3、安装AUR管理工具
+
+想要使用AUR中的软件，一种方式是在图形的软件安装界面的设置中把AUR打开，然后搜索进行安装，另外是使用命令行工具进行安装。
+
+由于Yaourt已经不再维护，这里选择了Yay来管理AUR仓库中的软件。
+	
+sudo pacman -S yay
+
+Yay默认使用法国的aur.archlinux.org作为AUR源，可以更改为国内清华大学提供的镜像。
+
+yay 用户执行以下命令修改 aururl ：
+	
+yay --aururl "https://aur.tuna.tsinghua.edu.cn" --save
+
+修改的配置文件位于 ~/.config/yay/config.json
+
+yaourt 用户，修改 /etc/yaourtrc，去掉 # AURURL 的注释，修改为
+	
+AURURL="https://aur.tuna.tsinghua.edu.cn"
+
+4、安装及配置中文输入法
+	
+sudo pacman -S fcitx-googlepinyin #安装搜狗输入法无法启动，查询好像没法安装fcitx-qt4导致的
+sudo pacman -S fcitx-im # 选择全部安装
+sudo pacman -S fcitx-configtool # 安装图形化配置工具
+sudo pacman -S fcitx-skin-material #皮肤
+sudo pacman -S fcitx-cloudpinyin #需要在配置中附加组件里将云拼音来源改为百度，因为 Google 的服务在国内不稳定
+
+编辑配置文件~/.xprofile（如果文件不存在则创建），增加如下内容：
+	
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS="@im=fcitx"
+
+如果安装搜狗输入法 sudo pacman -S fcitx-sogoupinyin会出现无法使用的问题，系统提示如下内容：解决搜狗输入法异常！请删除.config/SogouPY 并重启
+
+然而，安装上面的操作并不能解决问题。在命令行执行 sogou-qimpanel  可得到如下报错信息：
+	
+sogou-qimpanel: error while loading shared libraries: libfcitx-qt.so.0: cannot open shared object file: No such file or directory
+
+可知是缺少了libfcitx-qt.so.0这个文件，解决方案：上网搜索fcitx-libs-4.2.9.6-alt2_4.x86_64.rpm，解包得到libfcitx-qt.so.0,复制libfcitx-qt.so.0到/usr/lib。这里是别人已经解压好的内容：
+	
+sudo wget https://github.com/vvvxo/fcitx-libs-4.2.9.6-alt2_4.x86_64/blob/master/usr/lib64/libfcitx-qt.so.0?raw=true -O /usr/lib/libfcitx-qt.so.0
+
+安装搜狗柔兰皮肤： yay -S sogoupinyin-skin-roulan
+
+5、安装snap软件管理工具
+
+Snap是另外一个软件安装和管理工具（Ubuntu上自带）。提供了一个软件仓库。相关的软件信息可以通过https://snapcraft.io/store 查询获得。安装流程：
+	
+sudo pacman -S snapd
+sudo systemctl enable --now snapd.socket
+sudo ln -s /var/lib/snapd/snap /snap
+sudo snap install snap-store # 使用命令行安装图形化界面
+
+6、删除一些不需要的软件
+
+你可根据自己的需要自行决定要删除哪些内容：
+	
+sudo pacman -R libreoffice
+sudo pacman -R audacious
+sudo pacman -R xfburn
+sudo pacman -R ms-office-online
+sudo pacman -R xfce4-dict
+sudo pacman -R orage
+
+7、安装常用软件
+	
+# deepin开发的一些软件
+sudo pacman -S deepin-movie 
+sudo pacman -S deepin-music
+sudo pacman -S deepin-calculator
+sudo pacman -S deepin-file-manager
+sudo pacman -S deepin-calendar
+sudo pacman -S deepin-draw
+sudo pacman -S deepin-image-viewer
+sudo pacman -S deepin-picker
+sudo pacman -S deepin-screen-recorder
+sudo pacman -S deepin-screenshot
+sudo pacman -S deepin-system-monitor
+sudo pacman -S deepin-voice-recorder
+sudo pacman -S deepin-editor 
+yay -S deepin-wine-tim
+yay -S deepin-wine-wechat
+yay -S deepin.com.thunderspeed
+yay -S deepin-wine-qq
+ 
+#浏览器
+sudo pacman -S google-chrome
+ 
+#办公
+sudo pacman -S tusk #evernote第三方客户端
+sudo pacman -S wps-office
+sudo pacman -S ttf-wps-fonts
+sudo pacman -S foxitreader #pdf阅读
+sudo pacman -S youdao-dict
+sudo pacman -S goldendict
+yay -S buka #电子书管理
+sudo pacman -S bookworm #电子书阅读器
+yay -S xmind
+ 
+#图形工具
+sudo pacman -S gimp #PS
+sudo pacman -S inkscape #AI
+yay -S vidcutter #视频剪辑
+sudo pacman -S krita
+ 
+#娱乐
+sudo pacman -S netease-cloud-music
+sudo pacman -S webtorrent-desktop-bin
+yay -S popcorntime
+sudo pacman -S steam
+ 
+#教育
+sudo pacman -S scratch #幼儿编程
+sudo pacman -S stellarium #天文
+sudo pacman -S gcompris-qt #幼儿游戏
+yay -S google-earth
+ 
+# JAVA开发环境
+yay -S jdk  #可使用archlinux-java命令切换
+sudo pacman -S jdk-openjdk
+sudo pacman -S maven
+sudo pacman -S gradle
+sudo pacman -S intellij-idea-ultimate-edition
+sudo pacman -S android-studio
+# GO语言开发环境
+sudo pacman -S go
+sudo pacman -S goland
+# 前端开发环境
+sudo pacman -S nodejs
+sudo pacman -S npm
+sudo pacman -S webstorm
+sudo pacman -S atom
+sudo pacman -S visual-studio-code-bin
+# Python开发环境
+sudo pacman -S pycharm-professional
+# C语言开发环境
+sudo pacman -S geany
+sudo pacman -S codeblocks
+sudo pacman -S clion
+sudo pacman -S qtcreator
+# Python开发环境
+yay -S phpstorm
+# ruby开发环境
+yay -S ruby
+yay -S rubymine
+# R语言开发工具
+sudo pacman -S rstudio-desktop-bin
+# 数据库
+sudo pacman -S dbeaver
+sudo pacman -S mysql-workbench
+sudo pacman -S mycli
+yay -S datagrip
+# REST模拟工具
+sudo pacman -S postman-bin
+sudo pacman -S insomnia
+# 抓包工具
+yay -S charles
+sudo pacman -S wireshark-qt
+# GIT管理工具 
+sudo pacman -S gitkraken
+# 图案压缩
+yay -S trimage
+ 
+# 系统工具
+sudo pacman -S vim
+sudo pacman -S albert #类似Mac Spotlight，另外一款https://cerebroapp.com/
+yay -S remarkable #Markdown
+yay -S marktext-bin
+sudo pacman -S gedit
+sudo pacman -S nano
+sudo pacman -S pencil
+sudo pacman -S nmap
+sudo pacman -S zeal
+sudo pacman -S unarchiver #unar解压缩
+sudo pacman -S fish
+sudo pacman -S electron-ssr
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+yay -S font-manager-git
+sudo pacman -S teamviewer
+ 
+#下载工具
+sudo pacman -S aria2 #命令行工具
+sudo pacman -S baidunetdisk-bin
+ 
+#系统美化
+yay -S la-capitaine-icon-theme #或下载后解压到/usr/share/icons
+
+8、安装中文字体
+	
+sudo pacman -S adobe-source-han-sans-cn-fonts
+sudo pacman -S adobe-source-han-serif-cn-fonts
+
+微软雅黑：https://github.com/fphoenix88888/ttf-mswin10-arch
+
+中文开源字体集：https://github.com/DrXie/OSFCC
+
+手动安装字体方法：将字体会字体文件下放到对应目录：
+
+    全局用户：/usr/share/fonts/
+    单个用户：~/.local/share/fonts
+
+完成后执行： fc-cache -vf
+
+9、Anaconda环境的安装
+	
+sudo pacman -S anaconda
+
+返回内容：
+	
+Please run
+ 
+	$ source /opt/anaconda/bin/activate root
+	$ source /opt/anaconda/bin/deactivate root
+ 
+to activate and deactivate the anaconda enviroment.
+
+然后运行：
+	
+source /opt/anaconda/bin/activate root
+pip install jupyterlab #相比jupyter notebook体验更好。
+
+如果嫌激活太繁琐，可以在用户目录的.bashrc文件内加入
+
+export PATH=/opt/anaconda/bin:$PATH
+
+为了下载Python包的时候更加快速，可以修改pip源
+
+以上安装方法使用的是root进行安装，导致后期安装Python的时候会出现权限问题。解决方案：
+
+    从Anaconda官网下载.sh的安装文件
+    执行如下命令进项安装 sh ./Anaconda3-2019.07-Linux-x86_64.sh
+    在~/.bashrc文件中添加 export PATH=~/anaconda3/bin:$PATH
+    最后更新配置 source ~/.bashrc
+    安装Jupyter Lab： pip install jupyterlab
+
+由于Anaconda.org的服务器在国外，所以通常在国内使用conda下载速度会很慢。所以在国内通常使用清华TUNA镜像源。
+	
+# 添加Anaconda的TUNA镜像
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+# 设置搜索时显示通道地址
+conda config --set show_channel_urls yes
+
+10、MYSQL的安装
+	
+sudo pacman -S mariadb
+sudo mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
+sudo systemctl start mariadb
+sudo /usr/bin/mysql_secure_installation
+sudo systemctl enable mariadb
+mysql -u root -p
+
+11、PostgreSQL的安装
+	
+sudo pacman -S postgresql
+sudo -u postgres -i initdb --locale $LANG -E UTF8 -D /var/lib/postgres/data
+sudo systemctl start postgresql.service
+sudo systemctl enable postgresql.service
+
+初始化完成以后，会创建好配置文件和系统库。接下来编辑配置文件。配置文件都在刚才的数据目录内。先修改postgresql.conf文件，去掉listen_address前面的注释符，如果要监听所有IP，则将内容改为*。
+
+再修改pg_hba.conf文件，将：
+	
+host    all             all             127.0.0.1/32            ident
+host    all             all             ::1/128                 ident
+
+修改为
+	
+host    all             all             127.0.0.1/32            md5
+host    all             all             ::1/128                 md5
+
+pg_hba.conf文件格式声明：
+
+    TYPE 连接类型，表示允许用哪些方式连接数据库，它允许以下几个值：
+        local 通过 Unix socket 的方式连接。
+        host 通过 TCP/IP 的方式连接，它能匹配 SSL 和 non-SSL 连接。
+        hostssl 只允许 SSL 连接。
+        hostnossl 只允许 non-SSL 连接。
+    DATABASE 可连接的数据库，它有以下几个特殊值：
+        all 匹配所有数据库。
+        sameuser 可连接和用户名相同的数据库。
+        samerole 可连接和角色名相同的数据库。
+        replication 允许复制连接，用于集群环境下的数据库同步。 除了上面这些特殊值之外，我们可以写特定的数据库，可以用逗号 (,) 来分割多个数据库。
+    USER 可连接数据库的用户，值有三种写法：
+        all 匹配所有用户。
+        特定数据库用户名。
+        特定数据库用户组，需要在前面加上 + (如：+admin)。
+    ADDRESS 可连接数据库的地址，有以下几种形式：
+        all 匹配所有 IP 地址。
+        samehost 匹配该服务器的 IP 地址。
+        samenet 匹配该服务器子网下的 IP 地址。
+        ipaddress/netmask，支持 IPv4 与 IPv6。
+        如果上面几种形式都匹配不上，就会被当成是 hostname。 注意: 只有 host, hostssl, hostnossl 会应用个字段。
+    METHOD 连接数据库时的认证方式，常见的有几个特殊值：
+        trust 无条件通过认证。
+        reject 无条件拒绝认证。
+        md5 用 md5 加密密码进行认证。
+        password 用明文密码进行认证，不建议在不信任的网络中使用。
+        ident 从一个 ident 服务器 (RFC1413) 获得客户端的操作系统用户名并且用它作为被允许的数据库用户名来认证，只能用在 TCP/IP 的类型中 (即 host, hostssl, hostnossl)。
+        peer 从内核获得客户端的操作系统用户名并把它用作被允许的数据库用户名来认证，只能用于本地连接 (即 local)。
+        其他特殊值可以在 官方文档 中查阅。简单来说，ident 和 peer 都要求客户端操作系统中存在对应的用户。 注意: 上面列举的只有 md5 和 password 是需要密码的，其他方式都不需要输入密码认证。
+
+修改后重启服务：
+	
+sudo systemctl restart postgresql.service
+
+为postgres账号设置登陆密码：
+	
+sudo -u postgres -i
+psql
+postgres=#　alter user postgres with password 'new password'
+
+12、将用户目录下的中文文件夹修改为英文
+	
+sudo pacman -S xdg-user-dirs-gtk
+export LANG=en_US
+xdg-user-dirs-gtk-update
+#然后会有个窗口提示语言更改，更新名称即可
+export LANG=zh_CN.UTF-8
+#然后重启电脑如果提示语言更改，保留旧的名称即可
+
+13、双系统时间不同步问题
+
+如果你安装了双系统（Windows、Linux)会存在时间不同步的问题，导致其原因是Window记录的时间使用的是locatime，而windows记录的时间是UTC。这样当系统将时间同步给硬件后就会出现问题。简单的解决方案是将Linux下的时间设置未localtime：
+	
+timedatectl set-local-rtc true  #设置
+timedatectl set-local-rtc false #还原
+
+其他待尝试软件
+
+    https://spacevim.org/
+    http://spacemacs.org/
+    https://owncloud.org/
+    https://nextcloud.com/
+
+参考链接：
+
+    https://github.com/luong-komorebi/Awesome-Linux-Software
+    https://github.com/alim0x/Awesome-Linux-Software-zh_CN
+    https://www.fossmint.com/awesome-linux-software/
+    https://github.com/aleksandar-todorovic/awesome-linux
