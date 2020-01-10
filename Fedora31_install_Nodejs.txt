@@ -1,0 +1,28 @@
+Step 1: Update System
+Update your CentOS / Fedora system:
+
+---- Fedora ----
+$ sudo dnf -y update
+
+--- CentOS 7 ------
+$ sudo yum -y update
+Step 2: Install Node.js 12 LTS on CentOS 7 & Fedora 31/30/29
+To install Node.js 12.x LTS on CentOS 7 & Fedora 31/30/29, use NodeSource binary distributions.
+
+curl -sL https://rpm.nodesource.com/setup_12.x | sudo bash -
+The command above will install the NodeSource Node.js 12.x repo. Once the repository has been added, install Node.js 12 LTS.
+
+On CentOS 7:
+
+sudo yum clean all && sudo yum makecache fast
+sudo yum install -y gcc-c++ make
+sudo yum install -y nodejs
+
+On Fedora 31/30/29:
+
+sudo dnf install -y gcc-c++ make
+sudo dnf install -y nodejs
+Confirm Node version:
+
+$ node -v
+v12.13.0
