@@ -1,0 +1,120 @@
+Fedora 31/30，CentOS / RHEL 8.0 / 7.7上的VirtualBox 6.0
+更新于 2020年1月5日由JR 750评论
+virtualbox-徽标-小Oracle VirtualBox是功能强大的x86和AMD64 / Intel64虚拟化产品，适用于企业和家庭使用。VirtualBox是用于x86硬件的通用完整虚拟机。它面向服务器，台式机和嵌入式应用，现在是唯一具有开放源代码软件的专业质量的虚拟化解决方案。
+
+VirtualBox支持大量的来宾操作系统：
+
+
+ 
+Windows 3.x
+Windows NT 4.0
+Windows 2000
+Windows XP
+Windows Server 2003
+Windows Server 2008
+Windows Vista
+Windows 7的
+Windows 8
+Windows 8.1
+Windows 10
+DOS
+Linux（内核2.4、2.6、3.0、3.2、3.4、3.10、3.16、3.18、4.1、4.4、4.7、4.8、4.9、4.10、4.11、4.12、4.13、4.14、4.15、4.16、4.17、4.18、4.19、4.20、4.20 ，5.0、5.1、5.2、5.3）
+的Solaris
+OpenSolaris的
+OpenBSD的
+本指南显示了如何在Fedora 31/30/29/28，CentOS 8.0 / 7.7，Red Hat（RHEL）8.0 / 7.7上安装VirtualBox 6.0（当前为6.0.14）。本指南使用Virtual Box自己的yum存储库。
+
+1.更改为root用户
+su -
+## OR ##
+sudo -i
+2.安装Fedora或RHEL Repo文件
+注意：CentOS 8 / RHEL 8用户，请安装此程序，但当前仍需要测试构建。
+
+cd /etc/yum.repos.d/
+
+## Fedora 31/30/29/28 users
+wget http://download.virtualbox.org/virtualbox/rpm/fedora/virtualbox.repo
+
+## CentOS 8.0/7.7 and Red Hat (RHEL) 8.0/7.7 users
+wget http://download.virtualbox.org/virtualbox/rpm/rhel/virtualbox.repo
+3.更新最新的软件包并检查您的内核版本
+更新包
+
+## Fedora 31/30/29/28 and CentOS/RHEL 8 ##
+dnf update
+
+## CentOS/RHEL 7 ##
+yum update
+检查您是否正在运行最新安装的内核版本
+。以下命令的版本号输出应匹配：
+
+rpm -qa kernel |sort -V |tail -n 1
+
+uname -r
+注意：如果您有内核更新或运行的内核比最新安装的内核旧，请重新引导：
+
+reboot
+4.安装以下依赖包
+CentOS 8/7和Red Hat（RHEL）8/7需要EPEL存储库，请使用以下命令进行安装：
+
+## CentOS 8 and RHEL 8 ##
+dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+
+## CentOS 7 and RHEL 7 ##
+rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+## Fedora 31/30/29/28 ##
+dnf install binutils gcc make patch libgomp glibc-headers glibc-devel kernel-headers kernel-devel dkms qt5-qtx11extras libxkbcommon
+
+## CentOS/RHEL 8 ##
+dnf install binutils gcc make patch libgomp glibc-headers glibc-devel kernel-headers kernel-devel dkms
+
+## CentOS/RHEL 7 ##
+yum install binutils gcc make patch libgomp glibc-headers glibc-devel kernel-headers kernel-devel dkms
+
+ 
+5.安装VirtualBox最新版本6.0（当前为6.0.14）
+## Fedora 31/30/29/28/27 ##
+dnf install VirtualBox-6.0
+
+## CentOS/RHEL 8 ##
+dnf install VirtualBox-6.0
+
+## CentOS/RHEL 7 ##
+yum install VirtualBox-6.0
+注意：
+此命令会自动创建vboxusers组，而VirtualBox用户必须是该组的成员。
+此命令还构建所需的内核模块。
+软件包是VirtualBox-6.0，而不是VirtualBox。
+
+使用以下命令重建内核模块：
+
+## Fedora 31/30/29/28 and CentOS/RHEL 8/7 ##
+/usr/lib/virtualbox/vboxdrv.sh setup
+6.将VirtualBox用户添加到vboxusers组
+用您自己的用户名或其他真实用户名替换user_name。
+
+usermod -a -G vboxusers user_name
+7.启动VirtualBox
+使用菜单中的启动器或以普通用户身份运行VirtualBox：
+
+VirtualBox
+故障排除
+如果您对KERN_DIR参数有问题，或者无法自动检测到内核目录，请使用以下方法手动设置KERN_DIR环境变量：
+
+## Current running kernel on Fedora ##
+KERN_DIR=/usr/src/kernels/`uname -r`
+ 
+## Current running kernel on CentOS and Red Hat (RHEL) ##
+KERN_DIR=/usr/src/kernels/`uname -r`-`uname -m`
+ 
+## Fedora example ##
+KERN_DIR=/usr/src/kernels/2.6.33.5-124.fc13.i686
+ 
+## CentOS and Red Hat (RHEL) example ##
+KERN_DIR=/usr/src/kernels/2.6.18-194.11.1.el5-x86_64
+ 
+## Export KERN_DIR ##
+export KERN_DIR
+另请检查：
+在Fedora，CentOS，Red Hat（RHEL）上安装VirtualBox Guest Additions
