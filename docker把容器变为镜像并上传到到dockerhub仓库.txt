@@ -1,0 +1,19 @@
+docker把容器变为镜像并上传到到dockerhub仓库
+
+首先要在dockerhub仓库上新建仓库
+
+docker login
+
+登录完后，把所需上传的容器变为镜像
+docker commit containerId dockerUserName/XXX
+注：containerId为你需要上传的容器id，dockerUserName为dockerHub的登录名，xxx为仓库名,当然也不一定非得是dockerUserName/xxx，只是为了方便起见
+
+接下来为存在于本地的镜像打标签
+docker tag imageName dockerUserName/xxx[:tag]
+注：imageName为你需要上传的镜像name，dockerUserName为dockerHub的登录名，xxx为仓库名，必须和你在dockerhub中新建的仓库名相同，tag不指定就是latest
+
+打包好之后，就把打包好的镜像上传
+docker push dockerUserName/xxx[:tag]
+注：tag不指定就是latest
+
+最后就去dockerhub上查看是否上传成功
