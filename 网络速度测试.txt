@@ -1,0 +1,9 @@
+dnf install -y python36
+ln -s /usr/bin/python3.6 /usr/bin/python
+wget -O speedtest-cli https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py
+chmod +x speedtest-cli
+./speedtest-cli
+==================================================================================================
+Install Speedtest-CLI on Ubuntu
+sudo apt-get install speedtest-cli
+speedtest-cli
