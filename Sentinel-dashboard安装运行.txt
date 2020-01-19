@@ -1,0 +1,86 @@
+sentinel-dashboard安装、运行（ubuntu）
+下载页面https://github.com/alibaba/Sentinel/releases
+
+wget -P /opt/downloads https://github.com/alibaba/Sentinel/releases/download/1.6.0/sentinel-dashboard-1.6.0.jar
+mkdir /opt/sentinel-dashboard
+cp /opt/downloads/sentinel-dashboard-1.6.0.jar /opt/sentinel-dashboard/sentinel-dashboard-1.6.0.jar
+ 
+
+ 
+
+dashboard启动
+官方给出的端口为8080，我的机器上此端口已被其他程序占用，这里改为了8718
+
+java -Dserver.port=8718 -Dcsp.sentinel.dashboard.server=localhost:8718 -Dproject.name=sentinel-dashboard -Dcsp.sentinel.api.port=8719 -jar /opt/sentinel-dashboard/sentinel-dashboard-1.6.0.jar
+说明：
+-Dserver.port=8718 控制台端口，sentinel控制台是一个spring boot程序。客户端配置文件需要填对应的配置，如：spring.cloud.sentinel.transport.dashboard=192.168.1.102:8718
+-Dcsp.sentinel.dashboard.server=localhost:8718 控制台的地址，指定控制台后客户端会自动向该地址发送心跳包。
+-Dproject.name=sentinel-dashboard  指定Sentinel控制台程序的名称
+-Dcsp.sentinel.api.port=8719 (默认8719) 客户端提供给Dashboard访问或者查看Sentinel的运行访问的参数
+
+注：csp.sentinel.dashboard.server这个配置是用在客户端，这里Sentinel控制台也使用是用于自己监控自己程序的api，否则无法显示控制台的api情况，当然这个也可以根据情况不显示。
+
+注：csp.sentinel.api.port=8719是客户端的端口，需要把客户端设置的端口穿透防火墙，可在控制台的“机器列表”中查看到端口号，这里Sentinel控制台也使用是用于自己程序的api传输，由于是默认端口所以控制台也可以不设置。
+
+注：客户端需向控制台提供端口，配置文件配置，如：spring.cloud.sentinel.transport.port=8720
+
+控制台推送规则的日志在 ：${user.home}/logs/csp/sentinel-dashboard.log 中，
+客户端接收规则日志在 ${user.home}/logs/csp/record.log 中
+启动配置wiki： https://github.com/alibaba/Sentinel/wiki/启动配置项
+spring cloud alibaba配置、整合feign、动态数据源支持 等的wiki：https://github.com/spring-cloud-incubator/spring-cloud-alibaba/wiki/Sentinel
+
+ 
+
+dashboard守护进程启动
+
+新建sh脚本
+
+vim /opt/sentinel-dashboard/startup.sh
+脚本中填入
+
+#!/bin/bash
+java -Dserver.port=8718 -Dcsp.sentinel.dashboard.server=localhost:8718 -Dproject.name=sentinel-dashboard -Dcsp.sentinel.api.port=8719 -jar /opt/sentinel-dashboard/sentinel-dashboard-1.6.0.jar
+赋予权限
+
+chmod 777 /opt/sentinel-dashboard/startup.sh
+ 
+
+创建守护进程
+
+vim /lib/systemd/system/sentinel-dashboard.service
+文件中填入
+
+复制代码
+[Unit]
+Description=sentinel-dashboard
+After=syslog.target network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=simple 
+ExecStart=/opt/sentinel-dashboard/startup.sh 
+Restart=always 
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+复制代码
+赋予权限
+
+chmod 777 /lib/systemd/system/sentinel-dashboard.service
+启用服务
+
+systemctl enable sentinel-dashboard.service
+systemctl daemon-reload
+运行
+
+systemctl start sentinel-dashboard.service
+查看状态
+
+systemctl status sentinel-dashboard.service
+ 
+
+查看进程和端口
+
+ps -ef|grep sentinel-dashboard
+netstat -anltp|grep 8718
+netstat -anltp|grep 8719
