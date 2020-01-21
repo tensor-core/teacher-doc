@@ -1,0 +1,11 @@
+npm install node-sass死活安装不上，最后终于搞定
+转载wk964269669 最后发布于2017-06-02 16:36:16 阅读数 19915  收藏
+展开
+今天在windows上安装 node-sass  折腾了三个小时，各种百度都不行，cnpm也不想，最后再一条评论里看见了解决办法，终于成功了，具体如下：
+
+在项目内添加一个 .npmrc 文件：
+
+phantomjs_cdnurl=http://cnpmjs.org/downloads
+sass_binary_site=https://npm.taobao.org/mirrors/node-sass/
+registry=https://registry.npm.taobao.org
+然后使用 npm install 安装 node-sass 和 phantomjs 时都能自动从淘宝源上下载，但是在使用npm publish的时候要把 registry 这一行给注释掉，否则就会发布到淘宝源上去了。
