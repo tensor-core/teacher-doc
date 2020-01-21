@@ -1,0 +1,32 @@
+① npm -v  查看 npm 的版本
+② 安装包方法 npm install XXX(包名)  
+
+在指定文件夹下安装包之前，进入文件目录下初始化项目生成 package.json 文件（这个文件保存着项目的依赖信息），
+不了解的可以先去了解下 package.json 这个配置文件，
+这篇文章主要是介绍 npm 一些基本命令的使用；
+进入目录，在当前目录下打开 cmd 命令窗口，执行 npm init 命令，
+点击回车之后会让你输入一些关于本项目的一些基本信息（可忽略，一直回车直到初始化完成后即可）
+④ npm info jquery 查看包的详细信息
+
+ ⑤ 查看一个包存在的所有版本号 npm view jquery versions
+
+ ⑥ 查看指定包当前的最新版本 npm view jquery version
+
+ ⑦ 下载指定版本的包 npm install jquery@3.4.1
+
+ ⑧ npm list 查看项目安装了哪些包
+
+ ⑨ npm install jquery --save   或 npm i jquery -S          注：--save 表示 在 package.json 
+      文件中（dependencies）记录 下载包的版本信息；
+ 
+ ⑩ npm install jquery --save-dev  或 npm i jquery -D         下载开发依赖包，上一条命令是下载生产依赖包（这里就不讲开发依赖和生产依赖的区别）；
+
+ ①  npm root -g 查看全局安装包的存放位置
+
+ ② npm audit fix    包的修复 ，一般是包的更新
+
+ ③ npm ls jquery 查看当前安装包的版本
+
+ ④ 
+ 
+ 更改 npm 的下载镜像为淘宝镜像
