@@ -1,0 +1,65 @@
+kubectl常用命令
+原创need_your_name 最后发布于2016-11-10 12:34:37 阅读数 8483  收藏
+展开
+
+kubectl命令---
+获取namespace信息：
+kubectl get namespace
+查看node详细信息：
+kubectl describe node
+kubectl get node
+
+帮助信息--
+kubectl scale -h
+查看版本--
+kubectl version
+查看所有的pod---
+kubectl get pods --all-namespaces     查看所有pod；
+kubectl get deployment --all-namespaces   查看部署的应用；
+kubectl get deployment --namespace=kube-system kong -o yaml
+kubectl delete deployment --namespace=kube-system kong  删除指定的应用；
+kubectl get services
+kubectl get pod ded98392a-9d72-442f-905-3544635521-m02mv --namespace=d7c25b925-8ba7-44c3-b95
+kubectl get pod ded98392a-9d72-442f-905-3544635521-m02mv --namespace=d7c25b925-8ba7-44c3-b95（查看指定namespace的pod详细描述信息）
+
+按照yaml或json格式查看pod信息：
+kubectl get pod d2616548f-ea69-4244-819-1317460255-5d6pa --namespace=df432da7a-3a36-490f-a7b -o yaml
+kubectl get endpoints
+kubectl get namespaces
+应用namespace是随着项目走，项目不同，namespace就不同；
+kubectl命令将deployment替换RC，不再使用RC命令；
+查看k8s的manage的pod的镜像的版本号：
+kubectl get pod --namespace=kube-system               manage-2792156093-ijz4l -o yaml
+查看指定的service：
+kubectl get service kubernetes
+查看node主机：
+kubectl get node --no-headers -L zone
+查看service应用：
+kubectl get endpoints --all-namespaces
+kubectl describe service d5c4e0793-5b44-4b89-a51 --namespace=d07a12d56-fe42-4b27-a18
+查看端点endpoint:
+kubectl get endpoints --all-namespaces
+查看replicaset：
+replicaset是用来管理实例数量的，可以看成是rc/deployment的一个对象。
+kubectl get replicaset --all-namespaces
+删除指定replicaset:
+ kubectl delete replicaset --namespace=d4c71895a-c152-4c03-ba5   de31d32c8-9205-4b8e-b12-2472488937
+查看节点数据：
+kubectl describe/get node 10.158.99.12
+
+查看节点资源：
+kubectl get resourcequota --all-namespaces -o yaml
+查看镜像：
+sudo docker images
+sudo docker images | grep kong
+查看指定类型pod：
+kubectl get pod --all-namespaces -o yaml | grep manage
+查看log：
+kubectl logs -f --namespace=kube-system               manage-3943165616-l8ahz
+查看node信息：
+kubectl get node -a
+kubectl get node --show-labels
+kubectl get node --show-all
+查看endpoints信息---->
+容器虚ip/内部端口号---查看
+ kubectl get endpoints --namespace=d07a12d56-fe42-4b27-a18
