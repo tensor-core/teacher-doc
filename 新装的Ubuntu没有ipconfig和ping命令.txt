@@ -1,0 +1,14 @@
+新装的Ubuntu没有ipconfig和ping命令
+新装的Ubuntu或者Docker pull的Ubuntu镜像创建的容器没有ipconfig和ping命令
+
+解决办法：
+
+1、apt-get update
+
+2、安装和ifconfig有关的工具
+
+   apt install net-tools
+
+3、安装和ping有关的工具
+
+apt install iputils-ping
