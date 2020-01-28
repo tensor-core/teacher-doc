@@ -1,0 +1,47 @@
+#docker network create --subnet=172.18.0.0/16 k8s
+version: '3'
+#----------------master
+services:
+   ubuntu-master:
+      image: ubuntu
+      container_name: ubuntu-master
+      restart: always
+      tty: true
+      networks:
+         default:
+            ipv4_address: 172.18.0.31
+      ports:
+        - 9091:9091
+      volumes:
+        - ./master-data:/root
+#-------------node1
+   ubuntu-node1:
+      image: ubuntu
+      container_name: ubuntu-node1
+      restart: always
+      tty: true
+      networks:
+         default:
+            ipv4_address: 172.18.0.32
+      ports:
+        - 9092:9092
+      volumes:
+        - ./node1-data:/root
+#------------node2
+   ubuntu-node2:
+      image: ubuntu
+      container_name: ubuntu-node2
+      restart: always
+      tty: true
+      networks:
+         default:
+            ipv4_address: 172.18.0.33
+      ports:
+        - 9093:9093
+      volumes:
+        - ./node2-data:/root
+#      command: '/bin/bash'
+networks:
+  default:
+    external:
+      name: k8s
