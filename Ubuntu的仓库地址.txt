@@ -1,0 +1,18 @@
+使用说明
+Ubuntu的仓库地址为：https://repo.huaweicloud.com/ubuntu/
+Ubuntu-CD的镜像地址为：https://repo.huaweicloud.com/ubuntu-cdimage/
+Ubuntu-Cloud的镜像地址为：https://repo.huaweicloud.com/ubuntu-cloud-images/
+Ubuntu-Ports的仓库地址为：https://repo.huaweicloud.com/ubuntu-ports/
+Ubuntu-Releases的镜像地址为：https://repo.huaweicloud.com/ubuntu-releases/
+1、备份配置文件：
+cp -a /etc/apt/sources.list /etc/apt/sources.list.bak
+2、修改sources.list文件，将http://archive.ubuntu.com和http://security.ubuntu.com替换成http://repo.huaweicloud.com，可以参考如下命令：
+sed -i "s@http://.*archive.ubuntu.com@http://repo.huaweicloud.com@g" /etc/apt/sources.list
+sed -i "s@http://.*security.ubuntu.com@http://repo.huaweicloud.com@g" /etc/apt/sources.list
+3、执行apt-get update更新索引
+相关网址
+Ubuntu官方地址：http://www.ubuntu.com/
+Ubuntu论坛地址：http://ubuntuforums.org/
+Ubuntu Wiki地址：https://wiki.ubuntu.com/
+Ubuntu帮助地址：https://help.ubuntu.com/
+Ubuntu邮件列表地址：http://www.ubuntu.com/support/community/mailinglists
