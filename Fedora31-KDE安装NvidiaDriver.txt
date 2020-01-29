@@ -1,0 +1,28 @@
+Open up the terminal and identify your Nvidia graphic card model by executing:
+$ lspci -vnn | grep VGA
+01:00.0 VGA compatible controller [0300]: NVIDIA Corporation GP106 [GeForce GTX 1060 6GB] [10de:1c03] (rev a1) (prog-if 00 [VGA controller])
+Fully update your system
+# dnf update
+
+
+Enable RPM fusion:
+# dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm 
+# dnf install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E 
+ %fedora).noarch.rpm
+
+
+Lastly install a relevant Nvidia driver package by selecting one of the following options:
+For recent GeForce/Quadro/Tesla execute:
+# dnf install akmod-nvidia
+
+# dnf install nvidia-driver
+# reboot
+#===============================或者执行下面的操作，其实不用
+For Legacy GeForce 400/500 execute:
+# dnf install xorg-x11-drv-nvidia-390xx akmod-nvidia-390xx
+
+
+For Legacy GeForce 8/9/200/300 execute:
+# dnf install xorg-x11-drv-nvidia-340xx akmod-nvidia-340xx
+ All done. Reboot your system:
+# reboot
