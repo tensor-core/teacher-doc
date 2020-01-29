@@ -1,0 +1,21 @@
+
+sudo dnf install ibus-*
+
+修改/etc/profile文件：
+
+sudo vim /etc/profile
+
+输入密码
+
+在文件末尾添加：
+
+export GTK_IM_MODULE=ibus
+export XMODIFIERS=@im=ibus
+export QT_IM_MODULE=ibus
+
+保存
+
+shutdown -r now  //重启
+————————————————
+版权声明：本文为CSDN博主「yurh」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/yurhzzu/article/details/88556236
