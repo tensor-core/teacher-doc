@@ -53,3 +53,19 @@ Is this ok [y/N]: y
 ----------------------------------------------------------------------------------------------------
 Step 5: Add your user to the vboxusers group
 The vboxusers group is created automatically during installation. Add your user account to this group to operate VirtualBox without sudo.
+
+
+$ sudo usermod -a -G vboxusers $USER
+$ newgrp vboxusers
+$ id $USER
+uid=1000(jmutai) gid=1000(jmutai) groups=1000(jmutai),10(wheel),976(vboxusers)
+
+
+----------------------------------------------------------------------------------------------------
+Step 6: Launch VirtualBox on Fedora 31/30/29/28
+Use your Desktop environment search feature to find VirtualBox and launch it.
+
+
+To launch it from the terminal, run:
+
+$ virtualbox without sudo.
