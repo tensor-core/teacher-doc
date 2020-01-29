@@ -1,0 +1,55 @@
+----------------------------------------------------------------------------------------------------
+Step 1: Install Dependencies
+Let’s start by installing Development Tools required for building VirtualBox Linux kernel modules on Fedora.
+
+sudo dnf -y install @development-tools
+sudo dnf -y install kernel-headers kernel-devel dkms elfutils-libelf-devel qt5-qtx11extras
+
+----------------------------------------------------------------------------------------------------
+Step 2: Add VirtualBox RPM repository
+The latest VirtualBox packages are available on the RPM repository provided by VirtualBox development. Add it to your Fedora system using below command.
+
+cat <<EOF | sudo tee /etc/yum.repos.d/virtualbox.repo 
+[virtualbox]
+name=Fedora $releasever - $basearch - VirtualBox
+baseurl=http://download.virtualbox.org/virtualbox/rpm/fedora/29/\$basearch
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://www.virtualbox.org/download/oracle_vbox.asc
+EOF
+
+
+----------------------------------------------------------------------------------------------------
+Step 3: Import VirtualBox GPG Key
+After adding the repository, import the GPG key used for signing packages.
+
+$ sudo dnf search virtualbox
+Fedora  -  - VirtualBox                                                              159  B/s | 181  B     00:01    
+Fedora  -  - VirtualBox                                                              835  B/s | 1.7 kB     00:02    
+Importing GPG key 0x98AB5139:
+ Userid     : "Oracle Corporation (VirtualBox archive signing key) <info@virtualbox.org>"
+ Fingerprint: 7B0F AB3A 13B9 0743 5925 D9C9 5442 2A4B 98AB 5139
+ From       : https://www.virtualbox.org/download/oracle_vbox.asc
+Is this ok [y/N]: y
+Press “y” when prompted.
+
+
+----------------------------------------------------------------------------------------------------
+Step 4: Install VirtualBox 6 on Fedora 30/29/28
+Lastly, install VirtualBox 6 on Fedora 30/29/28.
+
+$ sudo dnf install VirtualBox-6.1
+...
+Transaction Summary
+=====================================================================================================================
+Install  9 Packages
+
+Total download size: 125 M
+Installed size: 279 M
+Is this ok [y/N]: y
+
+
+----------------------------------------------------------------------------------------------------
+Step 5: Add your user to the vboxusers group
+The vboxusers group is created automatically during installation. Add your user account to this group to operate VirtualBox without sudo.
