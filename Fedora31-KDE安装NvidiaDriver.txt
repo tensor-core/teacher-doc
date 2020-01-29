@@ -1,3 +1,6 @@
+Source
+------https://linuxconfig.org/how-to-install-the-nvidia-drivers-on-fedora-31
+
 Open up the terminal and identify your Nvidia graphic card model by executing:
 $ lspci -vnn | grep VGA
 01:00.0 VGA compatible controller [0300]: NVIDIA Corporation GP106 [GeForce GTX 1060 6GB] [10de:1c03] (rev a1) (prog-if 00 [VGA controller])
