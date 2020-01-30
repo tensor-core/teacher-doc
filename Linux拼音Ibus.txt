@@ -1,0 +1,29 @@
+linux 下的 idea 无法输入中文的解决办法
+原创非衣鲲化 最后发布于2018-11-15 10:35:49 阅读数 1986  收藏
+展开
+
+程序员之路
+记录一些自己开发过程中遇到的问题，以及解决办法，还有一些对人生的感悟
+非衣鲲化
+¥9.90
+去订阅
+RHEL7/CentOS7 下面的解决办法：
+RHEL/Centos7下面的输入法使用的是ibus架构。在/etc/profile后面增加如下配置信息：
+
+export XIM="ibus"
+export XIM_PROGRAM="ibus"
+export XMODIFIERS="@im=ibus"
+export GTK_IM_MODULE="ibus"
+export QT_IM_MODULE="ibus"
+如果ibus有问题，可以试着安装下 ibus-kkc 和 libusal
+
+如果输入法使用的架构是fcitx 那么需要将上面的ibus都换成fcitx就可以。
+
+archlinux英文系统Intellij Idea等编辑器无法输入中文解决办法，可以试着如下解决。加入你用的桌面管理器是startx或者startxfce4,在用户文件夹下.xinitrc文件中输入：
+export LC_CTYPE=zh_CN.UTF-8
+RHEL的该文件地址为：/etc/X11/xinit/xinitrc。
+
+Ubuntu下应该将ibus换成fcitx就可以，不过没有试过。
+————————————————
+版权声明：本文为CSDN博主「非衣鲲化」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/qq_32157851/article/details/84098999
