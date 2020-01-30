@@ -1,0 +1,56 @@
+How To Install Latest Node.js on Fedora 31/30/29
+Written by Rahul, Updated on December 11, 2019
+ Nodejs fedora, install node.js, node, node.js, nodejs 
+
+ 
+Node.js is a platform built on Chrome’s JavaScript runtime for easily building fast, scalable network applications. Latest version node.js dnf repository is maintaining by its official website. This tutorial will help you to install latest Node.js on Fedora 31/30/29/28/27/26/25 via DNF package manager.
+
+To install specific nodejs version, Visit our tutorial Install Specific Nodejs Version with NVM.
+
+Install latest node.js on Fedora
+
+Step 1 – Setup Dnf Repository
+First of all, You need to enable node.js yum repository in your system provided by the Node.js official website. You also need development tools to build native add-ons to be installed on your system.
+
+For Latest Release:-
+
+sudo dnf install -y gcc-c++ make
+curl -sL https://rpm.nodesource.com/setup_13.x | sudo -E bash -
+For Stable Release:-
+
+sudo dnf install -y gcc-c++ make
+curl -sL https://rpm.nodesource.com/setup_12.x | sudo -E bash -
+Step 2 – Install Node.js on Fedora
+After adding a yum repository in your system lets install the Node.js package. NPM will also be installed with node.js. This command will also install many other dependent packages on your system.
+
+sudo dnf install nodejs
+Step 3 – Check Node.js and NPM Version
+After installing node.js verify and check the installed version. You can find more details about current version on node.js official website.
+
+node --version
+
+v13.3.0
+Also, check the npm version installed on your Fedora system.
+
+npm --version
+
+6.13.1
+Step 4 – Run Demo HTTP Server (Optional)
+This is an optional step. If you want to test your node.js install. Let’s create a web server with “Welcome Node.js” text. Create a file demo_server.js
+
+vim http_demo_server.js
+and add the following content
+
+var http = require('http');
+http.createServer(function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('Welcome Node.js');
+}).listen(3001, "127.0.0.1");
+console.log('Server running at http://127.0.0.1:3001/');
+Now start the webserver using the command.
+
+node --inspect http_demo_server.js
+
+Debugger listening on ws://127.0.0.1:9229/5ee4a9ae-a9c8-4cd8-916d-13abe0836b53
+For help, see: https://nodejs.org/en/docs/inspector
+Server running at http://127.0.0.1:3001/
